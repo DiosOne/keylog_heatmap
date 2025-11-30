@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Dict, List, Union
 from PIL import Image, ImageDraw, ImageFont
 from gradient import grad_colour
-from heatmap.utilities import load_json, normalise_freqs, measure_layout
+from utilities import load_json, normalise_freqs, measure_layout
 
 BG= (17, 17, 17)
 OUTLINE= (200, 200, 200)
@@ -46,7 +46,7 @@ def render(keymap_path: Path, freq_path: Path, out_path: Path, target_width: int
     padding_px= int(unit_px * margin_units)
     img_height= int((max_y + margin_units*2) * unit_px)
     
-    img= Image.new('rgb', (target_width, img_height), BG)
+    img= Image.new('RGB', (target_width, img_height), BG)
     draw= ImageDraw.Draw(img)
     font= load_font(max(14, int(unit_px * 0.5)))
     
@@ -81,4 +81,4 @@ def render(keymap_path: Path, freq_path: Path, out_path: Path, target_width: int
     
 if __name__ == '__main__':
     base= Path(__file__).parent
-    render(base / 'keymap104.json', base / 'keyfreq.json', base / 'heatmap.png')
+    render(base / 'keymap_104.json', base / 'keyfreq.json', base / 'heatmap.png')
