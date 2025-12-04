@@ -26,6 +26,11 @@ Set up for a 104 ANSI as thats what I use..
 - Rounded keycaps with outlines, high-contrast labels, and a min/max legend.
 - Tweak `target_width` in `renderer.py` if you want a different resolution.
 
+### Dependencies
+
+- `pynput` (always), `python-xlib` on Linux/X11, and optionally `keyboard` for the fallback (requires sudo/udev access on Linux)
+- On Wayland, `pynput` may capture nothing. The fallback tries `keyboard`; it also cant see keys, run with sudo python logger.py on Linux or switchto Xorg session.
+
 ## Next Steps
 
 - Turn into a stand alone exe.

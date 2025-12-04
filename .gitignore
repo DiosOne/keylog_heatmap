@@ -1,1 +1,9 @@
 setup.md
+heatmap/sessions/*
+!heatmap/sessions/.gitkeep
+heatmap/keyfreq.json
+output_png/*
+!output_png/.gitkeep
+.venv
+__pycache__/
+*.py[cod]

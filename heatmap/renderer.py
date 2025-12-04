@@ -2,8 +2,8 @@ import json
 from pathlib import Path
 from typing import Dict, List, Union
 from PIL import Image, ImageDraw, ImageFont
-from gradient import grad_colour
-from utilities import load_json, normalise_freqs, measure_layout
+from heatmap.gradient import grad_colour
+from heatmap.utilities import load_json, normalise_freqs, measure_layout
 
 BG= (17, 17, 17)
 OUTLINE= (200, 200, 200)

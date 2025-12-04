@@ -1,13 +1,14 @@
 import json
+import os
+import sys
+import time
 from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
-from pynput import keyboard
-
 SESSIONS_DIR= Path(__file__).parent / 'sessions'
-SESSIONS_DIR.mkdir(exist_ok=True)
+SESSIONS_DIR.mkdir(parents=True, exist_ok=True)
 
 # map the keyboard library names to match keymap_104
 KEYBOARD_TO_KEYMAP= {
@@ -48,43 +49,92 @@ KEYBOARD_TO_KEYMAP= {
     "slash": "Slash", "/": "Slash",
 }
 
-def to_key_id(k) -> Optional[str]:
-    # character keys
-    if isinstance(k, keyboard.KeyCode) and k.char:
-        ch= k.char
-        if ch.isalpha():
-            return f"Key{ch.upper()}"
-        if ch.isdigit():
-            return f"Digit{ch}"
-        return KEYBOARD_TO_KEYMAP.get(ch)
-    # special keys
-    if isinstance(k, keyboard.Key):
-        # standardise naming from pynput to match keymap
-        name= k.name or ""
-        name= name.replace("_", " ")
-        return KEYBOARD_TO_KEYMAP.get(name)
-    return None
-
-def run_session():
-    counts= defaultdict(int)
-    
-    def on_press(k):
-        key_id= to_key_id(k)
-        if key_id:
-            counts[key_id] += 1
-        
-    print('Logging keys... Press Ctrl+C to stop and save session.')
-    with keyboard.Listener(on_press=on_press) as listener:
-        try:
-            listener.join()
-        except KeyboardInterrupt:
-            listener.stop()
-    
+def save_counts(counts: dict[str, int]) -> None:
     ts= datetime.now().strftime('%Y%m%d-%H%M%S')
     out_path= SESSIONS_DIR / f"session-{ts}.json"
     with out_path.open('w', encoding='utf-8') as f:
         json.dump(counts, f, indent=2)
     print(f"Saved session to {out_path}")
     
-if __name__== "__main__":
-    run_session()
+# pynput backend (Windows)
+def run_pynput() -> dict[str, int]:
+    from pynput import keyboard as pkb
+    counts= defaultdict(int)
+    stop_keys= {pkb.Key.esc, pkb.Key.pause}
+    
+    def to_key_id(k) -> Optional[str]:
+        if isinstance(k, pkb.KeyCode) and k.char:
+            ch= k.char
+            if ch.isalpha():
+                return f"Key{ch.upper()}"
+            if ch.isdigit():
+                return f"Digit{ch}"
+            return KEYBOARD_TO_KEYMAP.get(ch)
+        if isinstance(k, pkb.Key):
+            name= (k.name or "").replace("_", " ")           
+            return KEYBOARD_TO_KEYMAP.get(name)
+        return None
+    
+    def on_press(k):
+        if isinstance(k, pkb.Key) and k in stop_keys:
+            listener.stop()
+            return
+        key_id= to_key_id(k)
+        if key_id:
+            counts[key_id] += 1
+            
+    print('Logging keys (pynput)... Press Esc/F12/Break to stop and save session.')
+    with pkb.Listener(on_press=on_press) as listener:
+        listener.join()
+            
+    return dict(counts)
+
+# removed to focus on windows return once functional
+
+# # keyboard backend - needs sudo on Linux
+# def run_keyboard() -> dict[str, int]:
+#     import keyboard as kbd
+#     counts= defaultdict(int)
+    
+#     def to_key_id(name:str) -> Optional[str]:
+#         n= name.lower()
+#         if len(n) == 1 and n.isalpha():
+#             return f"Key{n.upper()}"
+#         if len(n) == 1 and n.isdigit():
+#             return f"Digit{n}"
+#         return KEYBOARD_TO_KEYMAP.get(n)
+    
+#     def on_event(event):
+#         if event.event_type != 'down':
+#             return
+#         key_id= to_key_id(event.name)
+#         if key_id:
+#             counts[key_id] += 1
+            
+#     print('Logging keys (keyboard)... Press Ctrl+C to stop and save session.')
+#     kbd.hook(on_event)
+#     try:
+#         kbd.wait()
+#     except KeyboardInterrupt:
+#         pass
+    
+#     return dict(counts)
+        
+def is_wayland() -> bool:
+    return os.environ.get('XDG_SESSION_TYPE', "").lower() == 'wayland'
+
+if __name__ == '__main__':
+    if not sys.platform.startswith('win'):
+        print('This logger path is windows only. Exiting.')
+        sys.exit(0)
+        
+    counts: dict[str, int] = {}
+    try:
+        counts= run_pynput()
+    except Exception as e:
+        print(f"pynput backend failed({e!r}); no Windows fallback in this build.")
+          
+    if counts:
+        save_counts(counts)
+    else:
+        print('No keypresses captured on Windows.')
