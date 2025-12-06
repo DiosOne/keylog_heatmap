@@ -7,3 +7,4 @@ output_png/*
 .venv
 __pycache__/
 *.py[cod]
+venvonPS.txt

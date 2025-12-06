@@ -33,7 +33,7 @@ def load_font(size: int) -> Union[ImageFont.FreeTypeFont, ImageFont.ImageFont]:
     except OSError:
         return ImageFont.load_default()
    
-def render(keymap_path: Path, freq_path: Path, out_path: Path, target_width: int= 2400):
+def render(keymap_path: Path, freq_path: Path, out_path: Path, target_width: int= 3200):
     keys: List[Dict]= load_json(keymap_path)
     freqs_raw: Dict[str, float]= load_json(freq_path)
     
@@ -66,6 +66,7 @@ def render(keymap_path: Path, freq_path: Path, out_path: Path, target_width: int
         h= key.get('h', 1) * unit_px
         
         freq_norm= freqs_norm.get(key['id'], 0.0)
+        freq_norm= pow(freq_norm, 0.5)
         fill= grad_colour(freq_norm)
         
         round_rect(draw, (x, y, x+w, y+h), radius=keycap_radius, fill=fill, outline=OUTLINE)
