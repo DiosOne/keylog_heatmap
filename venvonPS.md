@@ -11,7 +11,9 @@
 
 7. cleanup
 
-```Deactivate
-Remove-Item -Recurse -Force .venv
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1```
+    `Deactivate`
+
+    ```PS
+    Remove-Item -Recurse -Force .venv
+    python -m venv .venv
+    .\.venv\Scripts\Activate.ps1

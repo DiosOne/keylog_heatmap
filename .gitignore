@@ -8,3 +8,4 @@ output_png/*
 __pycache__/
 *.py[cod]
 venvonPS.txt
+.vscode

@@ -25,12 +25,20 @@ def draw_legend(draw: ImageDraw.ImageDraw, img_width: int, y: int, min_v: float,
     pad= 8
     draw.text((x0, y - legend_h - pad), f'Min: {min_v:.0f}', fill=LEGEND_TEXT, font=font)
     draw.text((x1 - 70, y -legend_h - pad), f'Max: {max_v:.0f}', fill=LEGEND_TEXT, font=font)
+    
      
-def load_font(size: int) -> Union[ImageFont.FreeTypeFont, ImageFont.ImageFont]:
-    try:
-        return ImageFont.truetype('DejaVuSans.ttf', size=size)
-    except OSError:
-        return ImageFont.load_default()
+def load_font(size: int) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
+    candidates= [
+        Path(__file__).parent/ "Trebuchet MS.ttf",
+        r"C:\Windows\Fonts\tahoma.ttf",
+        r"C:\Windows\Fonts\verdana.ttf",
+    ]
+    for fp in candidates:
+        try:
+            return ImageFont.truetype(str(fp), size=size)
+        except OSError:
+            continue
+    return ImageFont.load_default()
    
 def render(keymap_path: Path, freq_path: Path, out_path: Path, target_width: int= 3200):
     keys: List[Dict]= load_json(keymap_path)
@@ -48,7 +56,7 @@ def render(keymap_path: Path, freq_path: Path, out_path: Path, target_width: int
     
     img= Image.new('RGB', (target_width, img_height), BG)
     draw= ImageDraw.Draw(img)
-    font= load_font(max(16, int(unit_px * 0.6)))
+    font= load_font(max(24, int(unit_px * 0.4)))
     
     # frame
     draw.rounded_rectangle(
@@ -74,9 +82,11 @@ def render(keymap_path: Path, freq_path: Path, out_path: Path, target_width: int
         
         label= key.get('label', key['id'])
         bbox= draw.textbbox((0,0), label, font=font)
-        th,tw= bbox[2] - bbox[0], bbox[3] - bbox[1]
-        draw.text((x+(w-tw)/2, y+(h-th)/2), label, fill=TEXT, font=font)
-    
+        tw= bbox[2] - bbox[0]
+        th= bbox[3] - bbox[1]              
+        draw.text((x + (w - tw) / 2, y + (h - th) / 2), label, fill=TEXT, font=font)
+        
+        
     legend_y= img_height - padding_px - 50        
     draw_legend(draw, target_width, legend_y, min_v, max_v, font)
     
