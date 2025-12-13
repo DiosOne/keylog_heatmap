@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from typing import Dict, List, Union
+from typing import Dict, List
 from PIL import Image, ImageDraw, ImageFont
 from heatmap.gradient import grad_colour
 from heatmap.utilities import load_json, normalise_freqs, measure_layout
