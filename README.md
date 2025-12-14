@@ -1,43 +1,93 @@
-# Keyboard Heatmap (104 ANSI)
+# Keyboard Heatmap
 
-I was interested in what keys I press the most now that I use the computer for more than games, so I thought about a heatmap/keylogger (nb: doesnt record the order, just frequency).  
+## What it does
 
-This will generate a PNG heatmap of your most pressed keys using Pillow. The idea being you can customise your keyboards colours to highlight important keys if you wanted.  
+* Logs keypress counts per session (`python -m heatmap.logger`, stop with Esc/Break).
+* Merges all session JSONs into `heatmap/keyfreq.json` (`merge_sessions`).
+* Renders a heatmap PNG from `keymap_104.json` and `keyfreq.json` (`renderer`).
+* Outputs dated PNGs into `output_png/` (eg, `heatmap-YYYYMMDD-XX.png`).
 
-Set up for a 104 ANSI as thats what I use..
+## Requirements
 
-## Files
+* Windows with Python 3.10+
+* Deps: `pillow`, `pynput` (install in a venv).
 
-- `keymap_104.json` - positions and sizes for every key.
-- `keyfreq.json` - example frequencies (edit oe replace with your data if needed).
-- `gradient.py` - Colours based on the Decepticon Devastator, these two in particular are the complementary colour scheme versions.
-- `utilities.py` - JSON helpers and frequency normalisation.
-- `renderer.py` - loads data, draws the keyboard, writes out the heatmap PNG.
+## Setup (Powershell)
 
-## Usage
+```PS
+cd C:\Users\<you>\path\to\keylog_heatmap
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+pip install pillow pynput
+```
 
-1. Install deps: `python -m pip install pillow`
-2. Run: `python renderer.py`
-3. Output: `heatmap.png` (~2400px wide) on a dark backround.
+If activation fails: `set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass`
 
-## Notes
+---
 
-- Layout and colours are JSON-driven; missing keys default to zero frequency.
-- Rounded keycaps with outlines, high-contrast labels, and a min/max legend.
-- Tweak `target_width` in `renderer.py` if you want a different resolution.
+Usage
 
-### Dependencies
+1. Capture a session:
 
-- `pynput` (always), `python-xlib` on Linux/X11, and optionally `keyboard` for the fallback (requires sudo/udev access on Linux)
-- On Wayland, `pynput` may capture nothing. The fallback tries `keyboard`; it also cant see keys, run with sudo python logger.py on Linux or switchto Xorg session.
+```PS
+python -m heatmap.logger        # press Esc/Break to stop
+```
 
-## Next Steps
+1. Merge and render:
 
-- Turn into a stand alone exe.
-- Store sessions of keylogging and combine them into one heatmap.
-- Only generate heatmap on request by user.
+```PS
+python main.py      # writes output_png/heatmap-YYYYMMDD-XX.png
+```
 
-Essentially, make it so you choose when to gather data so theres no contamination from non use cases. ie you work, game, and general internet on the same pc, but only want the data from work.
+Files
 
-- Turn on, work, turn off. Data from that session is saved.
-- At the end of the week/month (or however long you want) press a button to generate a heatmap of all the saved data.
+* `heatmap/logger.py` : Windows logger (pynput), saves to `heatmap/sessions/session-*.json`.
+* `heatmap/merge_sessions.py` : Merges session JSONs into `heatmap/keyfreq.json`.
+* `heatmap/renderer.py` : Renders the PNG from layout and frequencies.
+* `heatmap/keymap_104.json` : ANSI 104-key layout.
+* `heatmap/keyfreq.json` : Generated merged frequencies (ignored by git).
+* `reset_keyfreq.py` : Clears heatmap/keyfreq.json after a Y/N prompt (sessions remain).
+* `output_png/` : Generated heatmaps (ignored by git).
+
+Packaging (Windows, planned)
+From an activated venv:
+
+```PS
+python -m pip install pyinstaller
+pyinstaller --onefile main.py
+```
+
+If you override fonts in `renderer.py`, include that TTF alongside the executable.
+
+Notes.
+
+* Run from the project root.
+* `.gitignore` excludes sessions, generated PNGs, `keyfreq.json`, `__pycache__`, and `.venv`.
+
+---
+
+## Sample Output
+
+![Keyboard heatmap sample](output_example/output_example.png)
+
+---
+
+### Project Planning Notes
+
+Over the course of two weeks, I estimate approximately 24 hours work went into this project.
+
+* Logging backend (pynput, stop keys, numpad mapping, etc): ~2-3 hours
+* Session merge pipeline (session-*.json -> keyfreq.json, safety checks): ~1 hour
+* Renderer tweaking (layout tweaks, legend/spacing, font/contrast, gamma changes): ~4 hours
+* Packaging/test (PyInstaller plan, manual smoke tests: logger -> main.py): ~1-2 hours
+
+With the rest spent on research and troubleshooting.
+
+---
+
+## License
+
+Code is licensed under the GNU General Public License v3.0 (GPL-3.0).
+
+&copy; 2025 Dom Andrewartha.

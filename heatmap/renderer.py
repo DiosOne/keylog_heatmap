@@ -1,3 +1,19 @@
+# heatmap/renderer.py
+# Copyright (C) 2025 Dom Andrewartha
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 import json
 from pathlib import Path
 from typing import Dict, List
@@ -39,8 +55,18 @@ def load_font(size: int) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
         except OSError:
             continue
     return ImageFont.load_default()
-   
+
+"""
+Render a keyboard heatmap PNG from a key latout JSON and a key frequency JSON.
+"""   
 def render(keymap_path: Path, freq_path: Path, out_path: Path, target_width: int= 3200):
+    """
+    Load key layout and frequencies, normalise counts, draw keys and legend, and save the PNG.
+    :param keymap_path: JSON with key positions/sizes/labels.
+    :param freq_path: JSON with key frequencies (id->count).
+    :param out_path: Destination PNG path.
+    :param target_width: Desired image width. Height is computed in layout.
+    """
     keys: List[Dict]= load_json(keymap_path)
     freqs_raw: Dict[str, float]= load_json(freq_path)
     

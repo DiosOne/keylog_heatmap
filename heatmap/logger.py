@@ -1,7 +1,22 @@
+# heatmap/logger.py
+# Copyright (C) 2025 Dom Andrewartha
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 import json
 import os
 import sys
-import time
 from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
@@ -49,7 +64,12 @@ KEYBOARD_TO_KEYMAP= {
     "slash": "Slash", "/": "Slash",
 }
 
+"""
+Windows-only keylogger for session-based key frequency capture.
+Esc/Break stops logging and writes a session JSON into heatmap/sessions
+"""
 def save_counts(counts: dict[str, int]) -> None:
+    """Write the captured key coujnts to a timestamped session file in heatmap/sessions."""
     ts= datetime.now().strftime('%Y%m%d-%H%M%S')
     out_path= SESSIONS_DIR / f"session-{ts}.json"
     with out_path.open('w', encoding='utf-8') as f:
@@ -58,6 +78,7 @@ def save_counts(counts: dict[str, int]) -> None:
     
 # pynput backend (Windows)
 def run_pynput() -> dict[str, int]:
+    """Capture keypress counts via pynput until Esc/Break is presed; returns id->count"""
     from pynput import keyboard as pkb
     counts= defaultdict(int)
     stop_keys= {pkb.Key.esc, pkb.Key.pause}
