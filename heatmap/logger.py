@@ -63,13 +63,29 @@ def run_pynput() -> dict[str, int]:
     stop_keys= {pkb.Key.esc, pkb.Key.pause}
     
     def to_key_id(k) -> Optional[str]:
-        if isinstance(k, pkb.KeyCode) and k.char:
-            ch= k.char
-            if ch.isalpha():
-                return f"Key{ch.upper()}"
-            if ch.isdigit():
-                return f"Digit{ch}"
-            return KEYBOARD_TO_KEYMAP.get(ch)
+        if isinstance(k, pkb.KeyCode):
+            if k.char:
+                ch= k.char
+                if ch.isalpha():
+                    return f"Key{ch.upper()}"
+                if ch.isdigit():
+                    return f"Digit{ch}"
+                return KEYBOARD_TO_KEYMAP.get(ch)
+            vk= getattr(k, 'vk', None)  
+            if k.vk is not None:
+                if vk is not None:
+                    if 96 <= vk <= 105:
+                        return f"Numpad{vk - 96}"
+                    if vk == 110:
+                        return 'NumpadDecimal'
+                    if vk == 107:
+                        return 'NumpadPlus'
+                    if vk == 109:
+                        return 'NumpadMinus'
+                    if vk == 106:
+                        return 'NumpadAsterisk'
+                    if vk == 111:
+                        return'NumpadSlash'
         if isinstance(k, pkb.Key):
             name= (k.name or "").replace("_", " ")           
             return KEYBOARD_TO_KEYMAP.get(name)
@@ -83,7 +99,7 @@ def run_pynput() -> dict[str, int]:
         if key_id:
             counts[key_id] += 1
             
-    print('Logging keys (pynput)... Press Esc/F12/Break to stop and save session.')
+    print('Logging keys (pynput)... Press Esc/Break to stop and save session.')
     with pkb.Listener(on_press=on_press) as listener:
         listener.join()
             

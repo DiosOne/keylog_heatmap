@@ -79,7 +79,8 @@ def render(keymap_path: Path, freq_path: Path, out_path: Path, target_width: int
         fill= grad_colour(freq_norm)
         
         round_rect(draw, (x, y, x+w, y+h), radius=keycap_radius, fill=fill, outline=OUTLINE, width=3)
-        
+        freq_norm= pow(freq_norm, 0.5)
+        fill= grad_colour(freq_norm)
         label= key.get('label', key['id'])
         bbox= draw.textbbox((0,0), label, font=font)
         tw= bbox[2] - bbox[0]

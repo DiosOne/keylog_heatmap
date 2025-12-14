@@ -9,8 +9,16 @@ def next_output_path(base_dir: Path) -> Path:
     out_dir= base_dir / 'output_png'
     out_dir.mkdir(exist_ok=True)
     pattern= f'heatmap-{stamp}-*.png'
-    existing= sorted(out_dir.glob(pattern))
-    next_idx= len(existing) + 1
+    
+    max_idx= 0
+    for fp in out_dir.glob(pattern):
+        try:
+            idx= int(fp.stem.rsplit("-", 1)[1])
+            max_idx= max(max_idx, idx)
+        except (IndexError, ValueError):
+            continue
+    
+    next_idx= max_idx + 1
     return out_dir / f'heatmap-{stamp}-{next_idx:02d}.png'
 
 
