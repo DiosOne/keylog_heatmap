@@ -8,6 +8,6 @@ __pycache__/
 .venv/
 output_png/
 heatmap/sessions/
-heatmap/keyfreq.json
+# heatmap/keyfreq.json
 dist/
 build/
