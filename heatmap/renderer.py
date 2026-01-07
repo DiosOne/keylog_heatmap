@@ -45,7 +45,7 @@ def draw_legend(draw: ImageDraw.ImageDraw, img_width: int, y: int, min_v: float,
      
 def load_font(size: int) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
     candidates= [
-        Path(__file__).parent/ "Trebuchet MS.ttf",
+        Path(__file__).parent/ "trebuc.ttf",
         r"C:\Windows\Fonts\tahoma.ttf",
         r"C:\Windows\Fonts\verdana.ttf",
     ]
