@@ -8,7 +8,7 @@ ENV APP_ENV=development \
 WORKDIR /app
 
 # install deps
-RUN pip install --no-cache-dir pillow pynput
+RUN pip install --no-cache-dir pillow
 
 # copy code and assets
 COPY heatmap ./heatmap
