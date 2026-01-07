@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.log
+*.swp
+.vscode/
+.venv/
+output_png/
+heatmap/sessions/
+heatmap/keyfreq.json
+dist/
+build/
