@@ -83,6 +83,8 @@ def render(keymap_path: Path, freq_path: Path, out_path: Path, target_width: int
     img= Image.new('RGB', (target_width, img_height), BG)
     draw= ImageDraw.Draw(img)
     font= load_font(max(24, int(unit_px * 0.4)))
+    # font= load_font(max(30, int(unit_px * 1.0)))
+
     
     # frame
     draw.rounded_rectangle(
