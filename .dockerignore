@@ -7,7 +7,7 @@ __pycache__/
 .vscode/
 .venv/
 output_png/
-heatmap/sessions/
+# heatmap/sessions/
 # heatmap/keyfreq.json
 dist/
 build/
