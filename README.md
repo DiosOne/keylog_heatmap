@@ -30,7 +30,7 @@ If activation fails: `set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 
 * The container runs merge+render (`python main.py`) by default.
 * If `heatmap/keyfreq.json` is missing, it will be created from `heatmap/keyfreq.sample.json`.
-* Keylogging (`python -m heatmap.keylogger`) runs on the host; containers can't capture keystrokes.
+* Keylogging (`python -m heatmap.logger`) runs on the host; containers can't capture keystrokes.
 
 ### Host logging (optional - to generate your own keystroke map)
 
