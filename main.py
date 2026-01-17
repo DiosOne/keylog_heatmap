@@ -15,6 +15,7 @@
 
 from datetime import datetime
 from pathlib import Path
+from shutil import copy2 
 
 from heatmap.merge_sessions import merge_sessions
 from heatmap.renderer import render
@@ -42,6 +43,14 @@ def main() -> None:
     keymap_path= base_dir / 'heatmap' / 'keymap_104.json'
     keyfreq_path= base_dir / 'heatmap' / 'keyfreq.json'
     output_path= next_output_path(base_dir)
+    
+    # ensure keyfreq.json exists so renderer.py doesn't fail
+    sample_freq= base_dir / 'heatmap' / 'keyfreq.sample.json'
+    if not keyfreq_path.exists():
+        if sample_freq.exists():
+            copy2(sample_freq, keyfreq_path)
+        else:
+            keyfreq_path.write_text('{}\n', encoding='utf-8')
     
     merge_sessions()
     render(keymap_path, keyfreq_path, output_path)
