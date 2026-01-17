@@ -34,7 +34,7 @@ If activation fails: `set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 
 ### Host logging (optional - to generate your own keystroke map)
 
-```powershell
+```PS
 python -m heatmap.logger # press esc/break to stop; writes heatmap/sessions/session-*.json
 ```
 
@@ -42,13 +42,13 @@ python -m heatmap.logger # press esc/break to stop; writes heatmap/sessions/sess
 
 ## Usage
 
-1. Capture a session:
+* Capture a session:
 
 ```PS
 python -m heatmap.logger        # press Esc/Break to stop
 ```
 
-1. Merge and render:
+* Merge and render:
 
 ```PS
 python main.py      # writes output_png/heatmap-YYYYMMDD-XX.png

@@ -7,8 +7,17 @@
 
 ## To run the app (container)
 
-    - Build: `docker build -t keylog-heatmap:dev .`
-    - Run: `docker run --rm -e APP_ENV=development -v %CD%/heatmap:/app/heatmap -v %CD%/output_png:/app/output_png keylog-heatmap:dev`
+    Build: docker build -t keylog_heatmap:dev-<gitsha> \
+                --build-arg APP_ENV=development \
+                --build-arg APP_VERSION=0.1.0 \
+                --build-arg GIT_SHA=<gitsha> .
+
+    Naming/Tagging:
+    - Format: keylog_heatmap:<env>-<gitsha>
+    - Example: keylog_heatmap:dev-abcd123
+
+    Run: docker run --rm -e APP_ENV=development -v %CD%/heatmap:/app/heatmap -v %CD%/output_png:/app/output_png keylog_heatmap:dev
+<!-- I had to format it like this, instead of a normal list, as vsc was giving me a linting error with the <> around gitsha. It thinks it's an inline link -->
 
 ## To generate your own session files (host)
 
@@ -18,4 +27,4 @@
 2. Install deps: `pip install pillow pynput`
 3. Start logging: `python -m heatmap.logger` (press esc/break to stop)
 4. Run the container to merge+render using your sessions:
-    - `docker run --rm -e APP_ENV=development -v %CD%/heatmap:/app/heatmap -v %CD%/output_png:/app/output_png keylog-heatmap:dev`
+    - `docker run --rm -e APP_ENV=development -v %CD%/heatmap:/app/heatmap -v %CD%/output_png:/app/output_png keylog_heatmap:dev`
