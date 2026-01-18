@@ -19,7 +19,7 @@ jobs:
           context: .
           push: false
           load: true
-          tags: keylog-heatmap:ci
+          tags: keylog_heatmap:ci
 
       - name: Smoke test render
-        run: docker run --rm keylog-heatmap:ci python main.py        
+        run: docker run --rm keylog_heatmap:ci python main.py        
